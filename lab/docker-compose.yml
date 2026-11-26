@@ -7,7 +7,7 @@
 # Alvos e portas (acesse pelo navegador do proprio Kali em http://localhost:PORTA):
 #   DVWA       -> 8081   (login admin / password)
 #   Juice Shop -> 3000
-#   WebGoat    -> 8080  (/WebGoat)  + WebWolf 9090
+#   WebGoat    -> 8085  (/WebGoat)  + WebWolf 9090   (8085 porque a 8080 e usada pelo Burp Suite)
 #   WordPress  -> 8082
 
 services:
@@ -30,8 +30,15 @@ services:
   webgoat:
     image: webgoat/webgoat
     container_name: lab-webgoat
+    # WebGoat na 8085 (a 8080 e a porta padrao do Burp Suite). O WebGoat precisa
+    # saber a propria porta internamente, por isso o env + o mesmo numero no mapeamento.
+    environment:
+      WEBGOAT_HOST: 0.0.0.0
+      WEBGOAT_PORT: 8085
+      WEBWOLF_HOST: 0.0.0.0
+      WEBWOLF_PORT: 9090
     ports:
-      - "8080:8080"
+      - "8085:8085"
       - "9090:9090"
     restart: unless-stopped
     networks: [labnet]

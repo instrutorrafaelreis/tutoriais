@@ -79,7 +79,7 @@ Devem aparecer 5 containers:
 Acesse pelo navegador do Kali:
     DVWA        ->  http://localhost:8081    (admin / password)
     Juice Shop  ->  http://localhost:3000
-    WebGoat     ->  http://localhost:8080/WebGoat
+    WebGoat     ->  http://localhost:8085/WebGoat
     WordPress   ->  http://localhost:8082
 
 

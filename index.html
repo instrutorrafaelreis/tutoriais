@@ -197,7 +197,7 @@ PHP[8.x], X-Powered-By[PHP/8.x], Cookies[PHPSESSID], IP[127.0.0.1]
 
 Execute:
 ```
-nmap -sV -p 8081,3000,8080,8082 localhost
+nmap -sV -p 8081,3000,8085,8082 localhost
 ```
 **Para que serve:** o `nmap` é o scanner de portas. O `-p` diz **quais portas** checar; o `-sV` tenta descobrir **qual serviço e versão** respondem em cada porta aberta. Confirma que os alvos estão ativos e o que exatamente roda em cada um.
 
@@ -205,7 +205,7 @@ nmap -sV -p 8081,3000,8080,8082 localhost
 ```
 PORT     STATE SERVICE VERSION
 3000/tcp open  http    Node.js Express framework   (Juice Shop)
-8080/tcp open  http    ...                          (WebGoat)
+8085/tcp open  http    ...                          (WebGoat)
 8081/tcp open  http    Apache httpd 2.4.x           (DVWA)
 8082/tcp open  http    Apache httpd                 (WordPress)
 ```
@@ -682,7 +682,7 @@ Com `htmlspecialchars`, o `<` vira `&lt;` e o `>` vira `&gt;` — então `<scrip
 - Fixe a lógica: **toda** injeção nasce de **misturar dado com código** — e a defesa é sempre **separar** (parametrizar / escapar / validar).
 - Para a competição, treine **velocidade**: reconhecer a falha e explorar rápido, documentando cada passo (print + comando) para o relatório.
 
-➡️ Quando você dominar isto, parta para o **WebGoat** (`http://localhost:8080/WebGoat`), que traz lições guiadas mais avançadas.
+➡️ Quando você dominar isto, parta para o **WebGoat** (`http://localhost:8085/WebGoat`), que traz lições guiadas mais avançadas.
 </script>
 
 <script>

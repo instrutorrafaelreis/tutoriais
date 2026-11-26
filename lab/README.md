@@ -32,7 +32,7 @@ O `setup-lab.sh` faz tudo sozinho: ajusta o apt para HTTPS (importante em redes 
 |------|----------|-------|
 | DVWA | http://localhost:8081 | admin / password (clique em *Create/Reset Database*) |
 | Juice Shop | http://localhost:3000 | — |
-| WebGoat | http://localhost:8080/WebGoat | crie um usuário |
+| WebGoat | http://localhost:8085/WebGoat | crie um usuário |
 | WordPress | http://localhost:8082 | — |
 
 Nos tutoriais das ferramentas, troque o IP de exemplo (ex.: `192.168.56.21`) por `localhost` + a porta. Ex.: `sqlmap -u "http://localhost:8081/..."`.
