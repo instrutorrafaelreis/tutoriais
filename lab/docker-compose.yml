@@ -1,0 +1,66 @@
+# Cyber SENAI Porto — Lab Tudo-em-Um (alvos de treino em containers)
+# Sobe todos os alvos web dentro de UMA unica VM Kali.
+#   Subir:    sudo docker compose up -d     (no Kali, se nao houver o plugin: sudo docker-compose up -d)
+#   Status:   sudo docker ps
+#   Desligar: sudo docker compose down       (ou: sudo docker-compose down)
+#
+# Alvos e portas (acesse pelo navegador do proprio Kali em http://localhost:PORTA):
+#   DVWA       -> 8081   (login admin / password)
+#   Juice Shop -> 3000
+#   WebGoat    -> 8080  (/WebGoat)  + WebWolf 9090
+#   WordPress  -> 8082
+
+services:
+  dvwa:
+    image: vulnerables/web-dvwa
+    container_name: lab-dvwa
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    networks: [labnet]
+
+  juice-shop:
+    image: bkimminich/juice-shop
+    container_name: lab-juice-shop
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks: [labnet]
+
+  webgoat:
+    image: webgoat/webgoat
+    container_name: lab-webgoat
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    restart: unless-stopped
+    networks: [labnet]
+
+  wordpress-db:
+    image: mariadb:10
+    container_name: lab-wp-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wp
+    restart: unless-stopped
+    networks: [labnet]
+
+  wordpress:
+    image: wordpress:latest
+    container_name: lab-wordpress
+    depends_on: [wordpress-db]
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db:3306
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wordpress
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+    networks: [labnet]
+
+networks:
+  labnet:
+    driver: bridge

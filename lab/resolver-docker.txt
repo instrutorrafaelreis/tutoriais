@@ -1,0 +1,137 @@
+=====================================================================
+ RESOLVER DOCKER / COMPOSE - Cyber SENAI Porto (Lab Tudo-em-Um)
+=====================================================================
+
+Use este arquivo quando o setup-lab.sh falhar na parte do Docker Compose
+(ex.: "sudo: docker-compose: comando nao encontrado" ou os sites em
+localhost nao abrem porque os containers nao subiram).
+
+
+---------------------------------------------------------------------
+ 0) APT "Conexao falhou" / "Nao e possivel encontrar o pacote docker.io"
+---------------------------------------------------------------------
+
+Sintoma: o apt mostra "Conexao falhou [IP: ... 80]" e depois
+"E: Nao e possivel encontrar o pacote docker.io".
+
+Causa: a rede bloqueia HTTP (porta 80) e/ou a VM veio com um mirror
+so-HTTP (ex.: elmirror.cl). O apt nao consegue baixar o indice.
+
+Solucao: apontar o apt para o mirror oficial da Cloudflare (HTTPS) e
+atualizar. DIGITE (como root, sem sudo; se nao for root use sudo):
+
+    echo 'deb https://kali.download/kali kali-rolling main contrib non-free non-free-firmware' > /etc/apt/sources.list
+    apt update
+    bash setup-lab.sh
+
+(Depois do "apt update" deve aparecer "https://kali.download ..." sem
+"Conexao falhou". O setup-lab.sh ja faz isso sozinho na versao nova.)
+
+
+---------------------------------------------------------------------
+ 1) INSTALAR O DOCKER COMPOSE (direto do GitHub, via HTTPS)
+---------------------------------------------------------------------
+
+Entre na pasta do lab:
+
+    cd ~/lab
+
+Baixe o Compose v2 para dentro do /usr/local/bin:
+
+    wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+
+De permissao de execucao:
+
+    chmod +x /usr/local/bin/docker-compose
+
+Teste se funcionou (deve mostrar "Docker Compose version v2..."):
+
+    docker-compose version
+
+OBS: se voce NAO estiver como root, coloque "sudo" na frente dos
+comandos acima (sudo wget ... / sudo chmod ...). Como root (prompt "#"),
+NAO use sudo.
+
+
+---------------------------------------------------------------------
+ 2) SUBIR OS ALVOS
+---------------------------------------------------------------------
+
+    cd ~/lab
+    docker-compose up -d
+
+Se aparecer "Cannot connect to the Docker daemon", inicie o Docker e
+tente de novo:
+
+    systemctl start docker
+    docker-compose up -d
+
+
+---------------------------------------------------------------------
+ 3) CONFERIR
+---------------------------------------------------------------------
+
+    docker ps
+
+Devem aparecer 5 containers:
+    lab-dvwa   lab-juice-shop   lab-webgoat   lab-wordpress   lab-wp-db
+
+Acesse pelo navegador do Kali:
+    DVWA        ->  http://localhost:8081    (admin / password)
+    Juice Shop  ->  http://localhost:3000
+    WebGoat     ->  http://localhost:8080/WebGoat
+    WordPress   ->  http://localhost:8082
+
+
+---------------------------------------------------------------------
+ ERRO 404 OU "zsh: bad pattern: [200~"  (COLAR GRUDOU CARACTERES)
+---------------------------------------------------------------------
+
+Sintoma: a URL terminou com "~" (ex.: ...x86_64~) e deu "404 Not Found",
+ou apareceu "zsh: bad pattern: ^[[200~".
+
+Causa: isso acontece quando voce COLA no terminal. Ele gruda marcas de
+colar ([200~ no inicio e ~ no fim), corrompendo o comando/URL.
+
+Solucao A (mais facil) - rebaixar o script ja corrigido e rodar:
+
+    cd ~/lab
+    wget -O setup-lab.sh https://raw.githubusercontent.com/instrutorrafaelreis/tutoriais/main/lab/setup-lab.sh
+    bash setup-lab.sh
+
+Solucao B - instalar o Compose a mao, DIGITANDO a URL e terminando
+EXATAMENTE em "x86_64" (sem "~" no final):
+
+    cd ~/lab
+    wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    chmod +x /usr/local/bin/docker-compose
+    docker-compose version
+    docker-compose up -d
+
+DICA: DIGITE os comandos em vez de colar. Para nomes de arquivo, depois
+de escrever o comeco use a tecla TAB para completar.
+
+
+---------------------------------------------------------------------
+ COMANDOS UTEIS
+---------------------------------------------------------------------
+
+    docker ps                 # ver o que esta rodando
+    docker-compose down       # desligar tudo (rode dentro de ~/lab)
+    docker-compose up -d      # subir de novo
+    docker logs lab-dvwa      # ver o log de um container (troque o nome)
+
+
+---------------------------------------------------------------------
+ POR QUE ISSO ACONTECE (para explicar a turma)
+---------------------------------------------------------------------
+
+- No Kali NAO existe o pacote "docker-compose-plugin" (ele e do
+  repositorio oficial da Docker, nao do Kali). Por isso usamos a versao
+  "docker-compose" (com hifen) ou o binario do GitHub.
+- Quando voce esta logado como ROOT, usar "sudo" reseta o PATH e pode
+  nao achar o docker-compose. Como root, rode os comandos SEM sudo.
+- Muitas redes de escola/empresa bloqueiam HTTP (porta 80), que e o que
+  o apt do Kali usa. HTTPS (443) passa - por isso baixamos o Compose do
+  GitHub por HTTPS e ajustamos o apt para HTTPS no setup-lab.sh.
+=====================================================================
